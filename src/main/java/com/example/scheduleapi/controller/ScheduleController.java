@@ -3,6 +3,8 @@ package com.example.scheduleapi.controller;
 import com.example.scheduleapi.dto.ScheduleRequestDto;
 import com.example.scheduleapi.dto.ScheduleResponseDto;
 import com.example.scheduleapi.entity.Schedule;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,7 @@ public class ScheduleController {
     private final Map<Long, Schedule> scheduleList = new HashMap<>();
 
     @PostMapping
-    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto requestDto) {
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
 
         // 현재 ID를 구하기 위해 스케쥴 중 가장 큰 키 값 구하여 +1
         Long Id = scheduleList.isEmpty() ? 1 : Collections.max(scheduleList.keySet()) + 1;
@@ -36,7 +38,7 @@ public class ScheduleController {
         // 임시 DB에 일정 저장
         scheduleList.put(Id, schedule);
 
-        return new ScheduleResponseDto(schedule);
+        return new ResponseEntity<>(new ScheduleResponseDto(schedule), HttpStatus.CREATED);
     }
 
 }
