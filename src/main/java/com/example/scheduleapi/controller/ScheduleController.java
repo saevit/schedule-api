@@ -26,10 +26,6 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-
-    // DB 역할 수행을 위해... (임시)
-    private final Map<Long, Schedule> scheduleList = new HashMap<>();
-
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
 
