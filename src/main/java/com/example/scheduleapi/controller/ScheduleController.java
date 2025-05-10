@@ -2,22 +2,16 @@ package com.example.scheduleapi.controller;
 
 import com.example.scheduleapi.dto.ScheduleRequestDto;
 import com.example.scheduleapi.dto.ScheduleResponseDto;
-import com.example.scheduleapi.entity.Schedule;
 import com.example.scheduleapi.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/schdeule") // prefix
+@RequestMapping("/api/schedule") // prefix
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
@@ -30,6 +24,12 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
 
         return new ResponseEntity<>(scheduleService.saveSchedule(requestDto), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ScheduleResponseDto>> findSchedule(@RequestParam(required = false) String author, @RequestParam(required = false) LocalDate updatedDate) {
+
+        return new ResponseEntity<>(scheduleService.fineSchedule(author, updatedDate), HttpStatus.OK);
     }
 
 }
