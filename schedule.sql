@@ -1,4 +1,3 @@
--- console
 USE schedule;
 
 -- 테이블 생성 (schedules)
@@ -11,3 +10,8 @@ CREATE TABLE schedules
     created_at DATETIME DEFAULT NOW() COMMENT '작성일',
     updated_at DATETIME DEFAULT NOW() ON UPDATE NOW() COMMENT '수정일'
 );
+
+-- 테이블 수정 (schedules)
+ALTER TABLE schedules
+    MODIFY COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '작성일',
+    MODIFY COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일';

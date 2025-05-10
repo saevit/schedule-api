@@ -21,9 +21,6 @@ public class ScheduleServiceImp implements ScheduleService{
         // 요청받은 데이터로 Schedule 객체 생성
         Schedule schedule = new Schedule(requestDto.getTask(), requestDto.getAuthor(), requestDto.getPassword());
 
-        // 임시 DB에 일정 저장
-        Schedule saveSchedule = scheduleRepository.saveschedule(schedule);
-
-        return new ScheduleResponseDto(saveSchedule);
+        return scheduleRepository.saveschedule(schedule);
     }
 }
