@@ -6,6 +6,9 @@ import com.example.scheduleapi.entity.Schedule;
 import com.example.scheduleapi.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 public class ScheduleServiceImp implements ScheduleService{
 
@@ -22,5 +25,11 @@ public class ScheduleServiceImp implements ScheduleService{
         Schedule schedule = new Schedule(requestDto.getTask(), requestDto.getAuthor(), requestDto.getPassword());
 
         return scheduleRepository.saveschedule(schedule);
+    }
+
+    @Override
+    public List<ScheduleResponseDto> fineSchedule(String author, LocalDate updatedDate) {
+
+        return scheduleRepository.findSchedule(author, updatedDate);
     }
 }
