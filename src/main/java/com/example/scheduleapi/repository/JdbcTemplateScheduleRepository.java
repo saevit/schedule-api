@@ -23,6 +23,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    // 일정 생성
     @Override
     public ScheduleResponseDto saveschedule(Schedule schedule) {
         // SimpleJdbcInsert 객체 생성 (INSERT Query를 직접 작성하지 않아도 되도록)
@@ -38,13 +39,13 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         parameters.put("author", schedule.getAuthor());
         parameters.put("password", schedule.getPassword());
 
-
         // 저장 후 생성된 key값을 Number 타입으로 반환하는 메서드
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
         return new ScheduleResponseDto(findScheduleById(key.longValue()).get());
     }
 
+    // 전체 일정 조회
     @Override
     public List<ScheduleResponseDto> findSchedule(String author, LocalDate updatedDate) {
         // query(String sql, Object[] args, RowMapper<T> rowMapper)
@@ -84,7 +85,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         };
     }
 
-
+    // 선택 일정 조회
     @Override
     public Optional<Schedule> findScheduleById(Long id) {
         // query(String sql, RowMapper<T> rowMapper, Object args ...)
