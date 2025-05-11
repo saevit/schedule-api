@@ -20,16 +20,24 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
+    // 일정 생성
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
 
         return new ResponseEntity<>(scheduleService.saveSchedule(requestDto), HttpStatus.CREATED);
     }
 
+    // 전체 일정 조회
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findSchedule(@RequestParam(required = false) String author, @RequestParam(required = false) LocalDate updatedDate) {
 
         return new ResponseEntity<>(scheduleService.fineSchedule(author, updatedDate), HttpStatus.OK);
     }
 
+    // 선택 일정 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto>  findScheduleById(@PathVariable Long id){
+
+        return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
+    }
 }
