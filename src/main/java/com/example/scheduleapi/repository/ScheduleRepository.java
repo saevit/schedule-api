@@ -5,7 +5,6 @@ import com.example.scheduleapi.entity.Schedule;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface ScheduleRepository {
 
@@ -13,5 +12,9 @@ public interface ScheduleRepository {
 
     List<ScheduleResponseDto> findSchedule(String author, LocalDate updatedDate);
 
-    Optional<Schedule> findScheduleById(Long id);
+    Schedule findScheduleById(Long id);
+
+    int updateSchedule(Long id, String task, String author);
+
+    int deleteSchedule(Long id);
 }

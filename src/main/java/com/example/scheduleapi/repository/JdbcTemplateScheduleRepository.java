@@ -2,11 +2,13 @@ package com.example.scheduleapi.repository;
 
 import com.example.scheduleapi.dto.ScheduleResponseDto;
 import com.example.scheduleapi.entity.Schedule;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -42,7 +44,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         // 저장 후 생성된 key값을 Number 타입으로 반환하는 메서드
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
-        return new ScheduleResponseDto(findScheduleById(key.longValue()).get());
+        return new ScheduleResponseDto(findScheduleById(key.longValue()));
     }
 
     // 전체 일정 조회
@@ -87,11 +89,11 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
 
     // 선택 일정 조회
     @Override
-    public Optional<Schedule> findScheduleById(Long id) {
+    public Schedule findScheduleById(Long id) {
         // query(String sql, RowMapper<T> rowMapper, Object args ...)
         List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedules WHERE id = ?", scheduleRowMapperV2(), id);
 
-        return result.stream().findAny();
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
     }
 
     private RowMapper<Schedule> scheduleRowMapperV2() {
@@ -109,4 +111,17 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
             }
         };
     };
+
+    // 선택 일정 수정
+    @Override
+    public int updateSchedule(Long id, String task, String author) {
+        // 쿼리의 영향을 받은 row 수를 int로 반환
+        return jdbcTemplate.update("UPDATE schedules SET task = ?, author = ? WHERE id = ?", task, author, id);
+    }
+
+    @Override
+    public int deleteSchedule(Long id) {
+        // 쿼리의 영향을 받은 row 수를 int로 반환
+        return jdbcTemplate.update("delete from schedules where id = ?", id);
+    }
 }
