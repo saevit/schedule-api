@@ -16,10 +16,10 @@ public class ScheduleResponseDto {
     private LocalDateTime updatedAt;
 
     // Schedle class를 매개변수로 받는 생성자
-    public ScheduleResponseDto (Schedule schedule) {
+    public ScheduleResponseDto (Schedule schedule, String authorName) {
         this.id = schedule.getId();
         this.task = schedule.getTask();
-        this.author = schedule.getAuthor();
+        this.author = authorName;
         this.createdAt = schedule.getCreatedAt();
         this.updatedAt = schedule.getUpdatedAt();
     }

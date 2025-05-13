@@ -11,7 +11,7 @@ public interface ScheduleService {
 
     ScheduleResponseDto saveSchedule(ScheduleRequestDto requestDto);
 
-    List<ScheduleResponseDto> fineSchedule(String author, LocalDate updatedDate);
+    List<ScheduleResponseDto> findSchedule(Long authorId, LocalDate updatedDate);
 
     ScheduleResponseDto findScheduleById(Long id);
 

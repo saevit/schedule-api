@@ -30,9 +30,9 @@ public class ScheduleController {
 
     // 전체 일정 조회
     @GetMapping
-    public ResponseEntity<List<ScheduleResponseDto>> findSchedule(@RequestParam(required = false) String author, @RequestParam(required = false) LocalDate updatedDate) {
+    public ResponseEntity<List<ScheduleResponseDto>> findSchedule(@RequestParam(required = false) Long authorId, @RequestParam(required = false) LocalDate updatedDate) {
 
-        return new ResponseEntity<>(scheduleService.fineSchedule(author, updatedDate), HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.findSchedule(authorId, updatedDate), HttpStatus.OK);
     }
 
     // 선택 일정 조회

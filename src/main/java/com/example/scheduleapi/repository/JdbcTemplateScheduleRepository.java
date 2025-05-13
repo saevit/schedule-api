@@ -1,6 +1,5 @@
 package com.example.scheduleapi.repository;
 
-import com.example.scheduleapi.dto.ScheduleResponseDto;
 import com.example.scheduleapi.entity.Schedule;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,37 +26,37 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
 
     // 일정 생성
     @Override
-    public ScheduleResponseDto saveschedule(Schedule schedule) {
+    public Schedule saveschedule(Schedule schedule) {
         // SimpleJdbcInsert 객체 생성 (INSERT Query를 직접 작성하지 않아도 되도록)
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("schedules")
                 .usingGeneratedKeyColumns("id")
                 // 입력할 컬럼만 명시 (not null 발생을 막기 위해)
-                .usingColumns("task", "author", "password");
+                .usingColumns("task", "password", "author_id");
 
         // DB에 넣을 데이터 파라미터 설정 (키-컬럼이름, 값-값)
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("task", schedule.getTask());
-        parameters.put("author", schedule.getAuthor());
         parameters.put("password", schedule.getPassword());
+        parameters.put("author_id", schedule.getAuthorId());
 
         // 저장 후 생성된 key값을 Number 타입으로 반환하는 메서드
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
-        return new ScheduleResponseDto(findScheduleById(key.longValue()));
+        return findScheduleById(key.longValue());
     }
 
     // 전체 일정 조회
     @Override
-    public List<ScheduleResponseDto> findSchedule(String author, LocalDate updatedDate) {
+    public List<Schedule> findSchedule(Long authorId, LocalDate updatedDate) {
         // query(String sql, Object[] args, RowMapper<T> rowMapper)
         StringBuilder sql = new StringBuilder("SELECT * FROM schedules WHERE 1=1");
         List<Object> args = new ArrayList<>();
 
         // 작성자명 조건으로 조회
-        if (author != null && !author.isBlank()) {
-            sql.append(" AND author = ?");
-            args.add(author);
+        if (authorId != null) {
+            sql.append(" AND author_id = ?");
+            args.add(authorId);
         }
 
         // 수정일 조건으로 조회
@@ -69,41 +68,26 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         // 수정일 기준 내림차순으로 정렬
         sql.append(" ORDER BY updated_at DESC");
 
-        return jdbcTemplate.query(sql.toString(), args.toArray(),scheduleRowMapperV1());
-    }
-
-    private RowMapper<ScheduleResponseDto> scheduleRowMapperV1() {
-        return new RowMapper<ScheduleResponseDto>() {
-            @Override
-            public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new ScheduleResponseDto(
-                        rs.getLong("id"),
-                        rs.getString("task"),
-                        rs.getString("author"),
-                        rs.getTimestamp("created_at").toLocalDateTime(),
-                        rs.getTimestamp("updated_at").toLocalDateTime()
-                );
-            }
-        };
+        return jdbcTemplate.query(sql.toString(), args.toArray(),scheduleRowMapper());
     }
 
     // 선택 일정 조회
     @Override
     public Schedule findScheduleById(Long id) {
         // query(String sql, RowMapper<T> rowMapper, Object args ...)
-        List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedules WHERE id = ?", scheduleRowMapperV2(), id);
+        List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedules WHERE id = ?", scheduleRowMapper(), id);
 
         return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
     }
 
-    private RowMapper<Schedule> scheduleRowMapperV2() {
+    private RowMapper<Schedule> scheduleRowMapper() {
         return new RowMapper<Schedule>() {
             @Override
             public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new Schedule(
                         rs.getLong("id"),
                         rs.getString("task"),
-                        rs.getString("author"),
+                        rs.getLong("author_id"),
                         rs.getString("password"),
                         rs.getTimestamp("created_at").toLocalDateTime(),
                         rs.getTimestamp("updated_at").toLocalDateTime()
@@ -114,9 +98,9 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
 
     // 선택 일정 수정
     @Override
-    public int updateSchedule(Long id, String task, String author) {
+    public int updateSchedule(Long id, String task, Long authorId) {
         // 쿼리의 영향을 받은 row 수를 int로 반환
-        return jdbcTemplate.update("UPDATE schedules SET task = ?, author = ? WHERE id = ?", task, author, id);
+        return jdbcTemplate.update("UPDATE schedules SET task = ?, author_id = ? WHERE id = ?", task, authorId, id);
     }
 
     @Override
