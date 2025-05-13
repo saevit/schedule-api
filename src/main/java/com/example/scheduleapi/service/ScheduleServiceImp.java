@@ -40,6 +40,22 @@ public class ScheduleServiceImp implements ScheduleService{
         return ScheduleToResponseDto(scheduleRepository.saveschedule(schedule));
     }
 
+    // 일정 조회 (페이지네이션)
+    @Override
+    public List<ScheduleResponseDto> findSchedulePage(int page, int size) {
+        // Schedule 조회
+        // 단, offset부터 size 크기만 조회
+        int offset = page * size;
+        List<Schedule> scheduleList = scheduleRepository.findSchedulePage(offset, size);
+
+        List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
+        for (Schedule s : scheduleList) {
+            responseDtoList.add(ScheduleToResponseDto(s));
+        }
+
+        return responseDtoList;
+    }
+
     // 전체 일정 조회
     @Override
     public List<ScheduleResponseDto> findSchedule(Long authorId, LocalDate updatedDate) {

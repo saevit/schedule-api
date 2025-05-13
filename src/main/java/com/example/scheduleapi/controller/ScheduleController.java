@@ -28,6 +28,13 @@ public class ScheduleController {
         return new ResponseEntity<>(scheduleService.saveSchedule(requestDto), HttpStatus.CREATED);
     }
 
+    // 일정 조회 (페이지네이션)
+    @GetMapping("/page")
+    public ResponseEntity<List<ScheduleResponseDto>> findSchedulePage(@RequestParam int page, int size) {
+
+        return new ResponseEntity<>(scheduleService.findSchedulePage(page, size), HttpStatus.OK);
+    }
+
     // 전체 일정 조회
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findSchedule(@RequestParam(required = false) Long authorId, @RequestParam(required = false) LocalDate updatedDate) {
