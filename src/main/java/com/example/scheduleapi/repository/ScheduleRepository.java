@@ -9,6 +9,8 @@ public interface ScheduleRepository {
 
     Schedule saveschedule(Schedule schedule);
 
+    List<Schedule> findSchedulePage(int offset, int limit);
+
     List<Schedule> findSchedule(Long authorId, LocalDate updatedDate);
 
     Schedule findScheduleById(Long id);

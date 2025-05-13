@@ -46,6 +46,13 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         return findScheduleById(key.longValue());
     }
 
+    // 일정 조회 (페이지네이션)
+    @Override
+    public List<Schedule> findSchedulePage(int offset, int limit) {
+        // query(String sql, RowMapper<T> rowMapper, Object args ...)
+        return jdbcTemplate.query("SELECT * FROM schedules LIMIT ? OFFSET ?", scheduleRowMapper(), limit, offset);
+    }
+
     // 전체 일정 조회
     @Override
     public List<Schedule> findSchedule(Long authorId, LocalDate updatedDate) {
