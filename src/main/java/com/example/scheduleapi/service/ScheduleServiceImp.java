@@ -43,33 +43,19 @@ public class ScheduleServiceImp implements ScheduleService{
         return ScheduleToResponseDto(scheduleRepository.saveschedule(schedule));
     }
 
-    // 일정 조회 (페이지네이션)
+    // 전체 일정 조회
     @Override
-    public List<ScheduleResponseDto> findSchedulePage(int page, int size) {
-        // Schedule 조회
+    public List<ScheduleResponseDto> findSchedule(int page, int size, Long authorId, LocalDate updatedDate) {
+
+        // Schedule 전체 조회하기
         // 단, offset부터 size 크기만 조회
         int offset = page * size;
-        List<Schedule> scheduleList = scheduleRepository.findSchedulePage(offset, size);
+        List<Schedule> scheduleList = scheduleRepository.findSchedule(offset, size, authorId, updatedDate);
 
         // 페이지 결과가 없을 때 예외 발생
         if (scheduleList.isEmpty()) {
             throw new SchedulePageNotFoundException();
         }
-
-        List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
-        for (Schedule s : scheduleList) {
-            responseDtoList.add(ScheduleToResponseDto(s));
-        }
-
-        return responseDtoList;
-    }
-
-    // 전체 일정 조회
-    @Override
-    public List<ScheduleResponseDto> findSchedule(Long authorId, LocalDate updatedDate) {
-
-        // Schedule 전체 조회하기
-        List<Schedule> scheduleList = scheduleRepository.findSchedule(authorId, updatedDate);
 
         List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
         for (Schedule s : scheduleList) {

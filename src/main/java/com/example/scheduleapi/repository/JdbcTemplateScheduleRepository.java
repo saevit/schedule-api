@@ -45,16 +45,9 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         return findScheduleById(key.longValue());
     }
 
-    // 일정 조회 (페이지네이션)
-    @Override
-    public List<Schedule> findSchedulePage(int offset, int limit) {
-        // query(String sql, RowMapper<T> rowMapper, Object args ...)
-        return jdbcTemplate.query("SELECT * FROM schedules LIMIT ? OFFSET ?", scheduleRowMapper(), limit, offset);
-    }
-
     // 전체 일정 조회
     @Override
-    public List<Schedule> findSchedule(Long authorId, LocalDate updatedDate) {
+    public List<Schedule> findSchedule(int offset, int limit, Long authorId, LocalDate updatedDate) {
         // query(String sql, Object[] args, RowMapper<T> rowMapper)
         StringBuilder sql = new StringBuilder("SELECT * FROM schedules WHERE 1=1");
         List<Object> args = new ArrayList<>();
@@ -72,7 +65,9 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         }
 
         // 수정일 기준 내림차순으로 정렬
-        sql.append(" ORDER BY updated_at DESC");
+        sql.append(" ORDER BY updated_at DESC LIMIT ? OFFSET ?");
+        args.add(limit);
+        args.add(offset);
 
         return jdbcTemplate.query(sql.toString(), args.toArray(),scheduleRowMapper());
     }
