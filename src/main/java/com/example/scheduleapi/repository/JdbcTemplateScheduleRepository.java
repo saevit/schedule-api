@@ -1,13 +1,12 @@
 package com.example.scheduleapi.repository;
 
+import com.example.scheduleapi.common.exception.ScheduleNotFoundException;
 import com.example.scheduleapi.entity.Schedule;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -84,7 +83,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         // query(String sql, RowMapper<T> rowMapper, Object args ...)
         List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedules WHERE id = ?", scheduleRowMapper(), id);
 
-        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
+        return result.stream().findAny().orElseThrow(() -> new ScheduleNotFoundException());
     }
 
     private RowMapper<Schedule> scheduleRowMapper() {

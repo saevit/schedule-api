@@ -1,13 +1,12 @@
 package com.example.scheduleapi.repository;
 
+import com.example.scheduleapi.common.exception.AuthorNotFoundException;
 import com.example.scheduleapi.entity.Author;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -52,7 +51,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository{
 
         List<Author> result = jdbcTemplate.query("SELECT * FROM authors WHERE author_id = ?", authorRowMapper(), authorId);
 
-        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist author_id = " + authorId));
+        return result.stream().findAny().orElseThrow(() -> new AuthorNotFoundException());
     }
 
     // 이름과 이메일로 작성자 조회

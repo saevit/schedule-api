@@ -2,6 +2,7 @@ package com.example.scheduleapi.service;
 
 import com.example.scheduleapi.common.exception.IncorrectPasswordException;
 import com.example.scheduleapi.common.exception.NoRowsAffectedException;
+import com.example.scheduleapi.common.exception.SchedulePageNotFoundException;
 import com.example.scheduleapi.dto.SchedulePasswordDto;
 import com.example.scheduleapi.dto.ScheduleRequestDto;
 import com.example.scheduleapi.dto.ScheduleResponseDto;
@@ -49,6 +50,11 @@ public class ScheduleServiceImp implements ScheduleService{
         // 단, offset부터 size 크기만 조회
         int offset = page * size;
         List<Schedule> scheduleList = scheduleRepository.findSchedulePage(offset, size);
+
+        // 페이지 결과가 없을 때 예외 발생
+        if (scheduleList.isEmpty()) {
+            throw new SchedulePageNotFoundException();
+        }
 
         List<ScheduleResponseDto> responseDtoList = new ArrayList<>();
         for (Schedule s : scheduleList) {
