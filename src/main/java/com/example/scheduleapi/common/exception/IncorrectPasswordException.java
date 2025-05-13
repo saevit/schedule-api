@@ -2,7 +2,8 @@ package com.example.scheduleapi.common.exception;
 
 public class IncorrectPasswordException extends RuntimeException{
 
+    // 잘못된 비밀번호 예외처리
     public IncorrectPasswordException() {
-        super("Password is incorrect.");
+        super("잘못된 비밀번호 입니다.");
     }
 }

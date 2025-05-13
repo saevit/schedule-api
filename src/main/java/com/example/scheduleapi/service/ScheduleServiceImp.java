@@ -1,6 +1,7 @@
 package com.example.scheduleapi.service;
 
 import com.example.scheduleapi.common.exception.IncorrectPasswordException;
+import com.example.scheduleapi.common.exception.NoRowsAffectedException;
 import com.example.scheduleapi.dto.SchedulePasswordDto;
 import com.example.scheduleapi.dto.ScheduleRequestDto;
 import com.example.scheduleapi.dto.ScheduleResponseDto;
@@ -100,7 +101,7 @@ public class ScheduleServiceImp implements ScheduleService{
 
         // 수정된 일정이 없다면 예외처리
         if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No data has been modified.");
+            throw new NoRowsAffectedException("수정");
         }
 
         // 수정된 메모 조회
@@ -118,7 +119,7 @@ public class ScheduleServiceImp implements ScheduleService{
 
         // 삭제된 일정이 없다면 예외처리
         if (deletedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+            throw new NoRowsAffectedException("삭제");
         }
     }
 
