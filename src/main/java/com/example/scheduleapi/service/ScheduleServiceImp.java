@@ -1,5 +1,6 @@
 package com.example.scheduleapi.service;
 
+import com.example.scheduleapi.common.exception.IncorrectPasswordException;
 import com.example.scheduleapi.dto.SchedulePasswordDto;
 import com.example.scheduleapi.dto.ScheduleRequestDto;
 import com.example.scheduleapi.dto.ScheduleResponseDto;
@@ -138,7 +139,7 @@ public class ScheduleServiceImp implements ScheduleService{
 
         // - 비밀번호가 틀렸을 경우 예외 처리
         if (!password.equals(schedule.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password is incorrect.");
+            throw new IncorrectPasswordException();
         }
     }
 }
