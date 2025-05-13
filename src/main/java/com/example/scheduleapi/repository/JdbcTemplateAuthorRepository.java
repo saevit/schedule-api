@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateAuthorRepository implements AuthorRepository{
@@ -57,12 +56,12 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository{
     }
 
     // 이름과 이메일로 작성자 조회
-    // 단, 생성 전 이름과 이메일이 일치하는 작성자를 먼저 조회하므로 null 값을 반환하는 경우 존재
+    // 단, 존재하지 않는다면 생성
     @Override
-    public Optional<Author> findAuthorByNameAndEmail(String name, String email) {
+    public Author findOrSaveAuthor(String name, String email) {
         List<Author> result = jdbcTemplate.query("SELECT * FROM authors WHERE name = ? AND email = ?", authorRowMapper(), name, email);
 
-        return result.stream().findAny();
+        return result.stream().findAny().orElseGet(() -> saveAuthor(new Author(name, email)));
     }
 
     private RowMapper<Author> authorRowMapper() {

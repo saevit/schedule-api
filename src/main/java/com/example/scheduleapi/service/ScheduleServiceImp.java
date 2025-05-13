@@ -20,12 +20,10 @@ public class ScheduleServiceImp implements ScheduleService{
 
     private final ScheduleRepository scheduleRepository;
     private final AuthorRepository authorRepository;
-    private final AuthorService authorService;
 
-    public ScheduleServiceImp(ScheduleRepository scheduleRepository, AuthorRepository authorRepository, AuthorService authorService) {
+    public ScheduleServiceImp(ScheduleRepository scheduleRepository, AuthorRepository authorRepository) {
         this.scheduleRepository = scheduleRepository;
         this.authorRepository = authorRepository;
-        this.authorService = authorService;
     }
 
     // 일정 생성
@@ -33,7 +31,7 @@ public class ScheduleServiceImp implements ScheduleService{
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto requestDto) {
         // 해당 이름과 이메일이 일치하는 기존 작성자가 있는지 확인 후,
         // 없다면 생성하여 / 있다면 조회하여 불러오기
-        Author author = authorService.findOrSaveAuthor(requestDto.getName(), requestDto.getEmail());
+        Author author = authorRepository.findOrSaveAuthor(requestDto.getName(), requestDto.getEmail());
 
         // 요청받은 데이터로 Schedule 객체 생성
         Schedule schedule = new Schedule(requestDto.getTask(), author.getAuthorId(), requestDto.getPassword());
@@ -78,7 +76,7 @@ public class ScheduleServiceImp implements ScheduleService{
 
         // 해당 이름과 이메일이 일치하는 기존 작성자가 있는지 확인 후,
         // 없다면 생성하여 / 있다면 조회하여 불러오기
-        Author author = authorService.findOrSaveAuthor(requestDto.getName(), requestDto.getEmail());
+        Author author = authorRepository.findOrSaveAuthor(requestDto.getName(), requestDto.getEmail());
 
         // 일정 수정
         int updatedRow = scheduleRepository.updateSchedule(id, requestDto.getTask(), author.getAuthorId());
