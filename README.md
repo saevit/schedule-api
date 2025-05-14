@@ -11,10 +11,10 @@
 ## API 명세서
 | 기능             | Method | URL                 | Request                                                                 | Response                                                                                     | Status Code  |
 |------------------|--------|---------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|--------------|
-| 일정 생성        | POST   | /api/schedules      | `{ "task": "과제하기", "name": "홍길동", "email": "hong@mail.com", "password": "1234" }`| `{ "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 201 Created |
+| 일정 생성        | POST   | /api/schedules      | `{ "task": "과제하기",<br> "name": "홍길동",<br> "email": "hong@mail.com",<br> "password": "1234" }`| `{ "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 201 Created |
 | 전체 일정 조회   | GET    | /api/schedules      | /api/schedules?page=0&size=5&author=홍길동&updatedDate=2025-05-09       | `[ { "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }, ... ]` | 200 OK |
 | 선택 일정 조회   | GET    | /api/schedules/{id} | /api/schedules/1                                                        | `{ "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 	200 OK |
-| 선택 일정 수정   | PUT    | /api/schedules/{id} | /api/schedules/1<br>`{ "task": "강의듣기", "name": "홍길동", "email": "hong@mail.com", "password": "1234" }` | `{ "id": 1, "task": "강의듣기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 200 OK |
+| 선택 일정 수정   | PUT    | /api/schedules/{id} | /api/schedules/1<br>`{ "task": "강의듣기",<br> "name": "홍길동",<br> "email": "hong@mail.com",<br> "password": "1234" }` | `{ "id": 1, "task": "강의듣기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 200 OK |
 | 선택 일정 삭제   | DELETE | /api/schedules/{id} | `/api/schedules/1`<br>`{ "password": "1234" }`                           | -                                                                                            | 200 OK |
 
 
