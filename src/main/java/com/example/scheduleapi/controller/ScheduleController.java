@@ -29,7 +29,7 @@ public class ScheduleController {
     }
 
     // 전체 일정 조회 (페이지네이션)
-    @GetMapping("/page")
+    @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findSchedule(@RequestParam int page,
                                                                   @RequestParam int size,
                                                                   @RequestParam(required = false) Long authorId,
