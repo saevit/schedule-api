@@ -5,17 +5,21 @@
 ## 사용한 기술
 - Java
 - Spring Boot
+- JDBC
 
 
 ## API 명세서
 | 기능             | Method | URL                 | Request                                                                 | Response                                                                                     | Status Code  |
 |------------------|--------|---------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|--------------|
-| 일정 생성        | POST   | /api/schedules      | `{ "task": "과제하기", "author": "홍길동", "password": "1234" }`        | `{ "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 201 Created |
-| 전체 일정 조회   | GET    | /api/schedules      | `/api/schedules?author=홍길동&updatedDate=2025-05-09`                   | `[ { "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }, ... ]` | 200 OK |
-| 선택 일정 조회   | GET    | /api/schedules/{id} | `/api/schedules/1`                                                     | `{ "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 	200 OK |
-| 선택 일정 수정   | PUT    | /api/schedules/{id} | `/api/schedules/1`<br>`{ "task": "강의듣기", "author": "홍길동", "password": "1234" }` | `{ "id": 1, "task": "강의듣기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 200 OK |
-| 선택 일정 삭제   | DELETE | /api/schedules/{id} | `/api/schedules/1`<br>`{ "password": "1234" }`                          | -                                                                                            | 200 OK |
+| 일정 생성        | POST   | /api/schedules      | `{ "task": "과제하기", "name": "홍길동", "email": "hong@mail.com", "password": "1234" }`| `{ "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 201 Created |
+| 전체 일정 조회   | GET    | /api/schedules      | /api/schedules?page=0&size=5&author=홍길동&updatedDate=2025-05-09       | `[ { "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }, ... ]` | 200 OK |
+| 선택 일정 조회   | GET    | /api/schedules/{id} | /api/schedules/1                                                        | `{ "id": 1, "task": "과제하기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 	200 OK |
+| 선택 일정 수정   | PUT    | /api/schedules/{id} | /api/schedules/1<br>`{ "task": "강의듣기", "name": "홍길동", "email": "hong@mail.com", "password": "1234" }` | `{ "id": 1, "task": "강의듣기", "author": "홍길동", "createdAt": "...", "updatedAt": "..." }` | 200 OK |
+| 선택 일정 삭제   | DELETE | /api/schedules/{id} | `/api/schedules/1`<br>`{ "password": "1234" }`                           | -                                                                                            | 200 OK |
 
+
+## ERD
+![ERD 이미지](images/일정%20관리%20앱%20과제%20ERD.png)
 
 ## 기능 소개
 ### Lv1. 일정 생성 조회
@@ -23,13 +27,36 @@
   - ID는 자동으로 생성된다.
   - 적성일과 수정일 또한 따로 기입하지 않아도 자동으로 현재시간으로 입력된다. (최초 수정일은 작성일과 동일)
 - 작성자명과 수정일을 토대로 전체 조회
-  - 작성자명과 수정일은 전달 받을 수도, 없을 수도 있는 경우를 가정하여 구현
+  - 작성자명과 수정일은 선택적으로 전달될 수 있도록 구현했다.
 - ID를 토대로 선택 조회
 
 ### Lv2. 일정 수정 삭제
 - ID를 토대로 선택한 일정 수정
   - 선택한 일정 내용 중 할일, 작성자명 만 수정 가능하다.
-  - 서버에 일정 수정을 요청할 때 비밀번호를 함께 전달받아 일치하는지 확인 후 수정한다.
-  - 수정일 은 수정 완료 시, 수정한 시점으로 변경된다.
+  - 일정을 수정할 때, 서버는 전달받은 비밀번호가 일치하는 경우에만 수정하도록 처리했다.
+  - 수정일은 수정 완료 시, 수정한 시점으로 변경된다.
 - ID를 토대로 선택한 일정 삭제
-  - 서버에 일정 수정을 요청할 때 비밀번호를 함께 전달받아 일치하는지 확인 후 삭제한다.
+  - 일정을 삭제할 때, 서버는 전달받은 비밀번호가 일치하는 경우에만 삭제하도록 처리했다.
+
+### Lv3. 연관 관계 설정
+- 일정과 작성자의 테이블을 분리하여 관리하도록 수정
+  - 작성자 테이블은 동명이인을 구분하기 고유 식별자(ID)를 부여하였다.
+  - 작성자 테이블은 이름과 이메일, 등록일과 수정일을 저장한다.
+  - 일정 테이블은 작성자 ID를 외래키로 참조하도록 설정하였다.
+
+### Lv4. 페이지네이션
+- 전체 일정 조회시 페이지네이션 적용 되도록 수정
+  - URL로 page와 size를 전달하면 그에 맞는 페이지가 뜨도록 구현했다.
+  - 단, 해당 page에 일정이 없을 경우 []로 출력된다.
+
+### Lv5. 예외 발생 처리
+- 예외들을 한 곳에서 처리하도록 예외 처리 직접 구현
+  - httpStatusException으로 처리하였다 예외들을 모두 직접 구현하도록 수정하였다.
+  - 잘못된 비밀번호인 경우에 대한 예외 처리를 구현했다.
+  - 조회를 할 수 없는 경우 각각의 상항에 맞춰 예외 처리를 구현했다.
+  - page에 일정이 없는 경우 [] 출력이 아닌 예외 처리로 수정하였다.
+
+
+## 실행 방법
+1. src > main > java > com > example > scheduleapi > ScheduleApiApplication...main()을 실행한다.
+2. Postman을 사용하여 API 명세서를 토대로 요청을 보내면 응답을 받을 수 있다.
